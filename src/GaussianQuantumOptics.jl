@@ -31,6 +31,18 @@ vacuumstate() = vacuumstate(SVector{2}, SMatrix{2,2})
 
 
 """
+    
+
+"""
+function squeeze(::Type{Tm}, ::Type{Tc}) where {Tm, Tc}
+    mean = Tm([0.0, 0.0])
+    covar = Tc([1.0 0.0; 0.0 1.0])
+    return GaussianState(mean, covar)
+end
+vacuumstate() = vacuumstate(SVector{2}, SMatrix{2,2})
+
+
+"""
     coherentstate([Tm = SVector{2}, Tc = SMatrix{2,2},] alpha::N)
 
 Create a coherent state, the single-photon quantum analogue of monochromatic classical electromagnetic field, where `alpha` is the eigenvalue of
@@ -67,6 +79,20 @@ function Base.:(*)(x::DisplaceOperator{<:Number}, y::GaussianState{V,T}) where {
     end
 end
 
+
+"""
+    The "*" will apply a symplectic matrix to a GaussianState struct via V' = S V transpose(S), where S is the symplectic matrix.
+"""
 function Base.:(*)(x::DisplaceOperator{AbstractVector}, y::GaussianState{V,T}) where {V,T}
     # insert code for applying multi-mode displacement operator to multi-mode Gaussian state
 end
+
+
+"""
+    Combining modes is represented by the tensor product symbol. Mathematically, this is a direct sum
+"""
+
+function Base.:(⊗)(x::GaussianState{V,T}, y::GaussianState{V,T}) where {V,T}
+    # insert code for applying multi-mode displacement operator to multi-mode Gaussian state
+end
+
