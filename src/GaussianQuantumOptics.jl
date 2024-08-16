@@ -1,3 +1,4 @@
+# Note: This is a work in progress and is not yet functional.
 
 
 import QuantumOpticsBase: coherentstate
@@ -18,6 +19,8 @@ struct GaussianState{V,T} <: BosonicState
     mean::V
     covariance::T
 end
+
+## Initial States
 
 
 """
@@ -60,6 +63,20 @@ function coherentstate(::Type{Tm}, ::Type{Tc}, alpha::A) where {Tm, Tc, A<:Numbe
 end
 coherentstate(alpha::A) where {A<:Number} = coherentstate(SVector{2}, SMatrix{2,2}, alpha)
 
+function thermal
+
+end
+
+function tmsst
+
+end
+
+function displacesqueeze
+
+end
+
+
+## Operators
 
 """
     DisplaceOperator(alpha::N)
@@ -70,24 +87,32 @@ struct DisplaceOperator{N} <: GaussianOperator
     alpha::N
 end
 
-function Base.:(*)(x::DisplaceOperator{<:Number}, y::GaussianState{V,T}) where {V,T}
-    mean = y.mean
-    if length(mean) > 2
-        throw(ArgumentError("You are applying a single-mode displacement operator to a multi-mode Gaussian state."))
-    else
-        covar = y.covariance
-        q = y.mean[1]
-        p = y.mean[2]
-        return GaussianState(V([q+sqrt(2)*real(x.alpha),p+sqrt(2)*imag(x.alpha)]), covar)
-    end
+struct singlemodesqueezingoperator
+
+end
+
+struct twomodesqueezingoperator
+
+end
+
+struct phaseoperator
+
+end
+
+struct beamsplitter
+
 end
 
 
+## Functional Operations
+
+
 """
-    The "*" will apply a symplectic matrix to a GaussianState struct via V' = S V transpose(S), where S is the symplectic matrix.
+The Operate function will allow the user to define a sequence of operators to apply to a Gaussian state for a specific mode set
 """
-function Base.:(*)(x::DisplaceOperator{AbstractVector}, y::GaussianState{V,T}) where {V,T}
-    # insert code for applying multi-mode displacement operator to multi-mode Gaussian state
+
+function operate([Operator1, Op2, Op3], State, [Mode1, Mode2, Mode3])
+
 end
 
 
@@ -115,8 +140,35 @@ function ⊗(x::GaussianState{V,T}, y::GaussianState{V,T}) where {V,T}
 end
 
 
-x = GaussianState(SVector(0.0, 1.0), SMatrix{2, 2}(1.0I))
-y = GaussianState(SVector(2.0, 3.0), SMatrix{2, 2}(1.0I))
 
-z = x ⊗ y
+"""
+    The "*" will allow a user to apply a correctly formated operator to a Gaussian state. .
+"""
+function Base.:(*)(x::DisplaceOperator{AbstractVector}, y::GaussianState{V,T}) where {V,T}
+    # insert code for applying multi-mode displacement operator to multi-mode Gaussian state
+end
+
+function Base.:(*)(x::DisplaceOperator{<:Number}, y::GaussianState{V,T}) where {V,T}
+    mean = y.mean
+    if length(mean) > 2
+        throw(ArgumentError("You are applying a single-mode displacement operator to a multi-mode Gaussian state."))
+    else
+        covar = y.covariance
+        q = y.mean[1]
+        p = y.mean[2]
+        return GaussianState(V([q+sqrt(2)*real(x.alpha),p+sqrt(2)*imag(x.alpha)]), covar)
+    end
+end
+
+
+# Measurements and Representation
+
+
+function Wigner(State)
+
+end
+
+function Homodyne(State, mode)
+
+end
 
