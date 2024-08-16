@@ -1,0 +1,6 @@
+Manifest.toml
+LocalPreferences.toml
+*/.*swp
+scratch/
+*.cov
+.vscode
