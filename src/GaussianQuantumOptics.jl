@@ -1,9 +1,12 @@
+
+
 import QuantumOpticsBase: coherentstate
 import QuantumInterface: AbstractOperator
 import StaticArrays: SMatrix, SVector
+using LinearAlgebra
 
 abstract type BosonicState end
-abstract type GaussianOperator <: AbstractOperator end
+abstract type GaussianOperator end
 
 
 """
@@ -92,7 +95,28 @@ end
     Combining modes is represented by the tensor product symbol. Mathematically, this is a direct sum
 """
 
-function Base.:(⊗)(x::GaussianState{V,T}, y::GaussianState{V,T}) where {V,T}
-    # insert code for applying multi-mode displacement operator to multi-mode Gaussian state
+function ⊗(x::GaussianState{V,T}, y::GaussianState{V,T}) where {V,T}
+    # Concatenate the mean vectors of the two Gaussian states
+    combined_mean = vcat(x.mean, y.mean)
+
+    # Get the sizes of the covariance matrices
+    size_x = size(x.covariance, 1)
+    size_y = size(y.covariance, 1)
+
+    # Create a matrix to hold the block-diagonal covariance matrix
+    combined_size = size_x + size_y
+    combined_covariance = zeros(eltype(x.covariance), combined_size, combined_size)
+
+    # Insert the covariance matrices into the block diagonal
+    combined_covariance[1:size_x, 1:size_x] = x.covariance
+    combined_covariance[size_x+1:end, size_x+1:end] = y.covariance
+
+    return GaussianState(combined_mean, combined_covariance)
 end
+
+
+x = GaussianState(SVector(0.0, 1.0), SMatrix{2, 2}(1.0I))
+y = GaussianState(SVector(2.0, 3.0), SMatrix{2, 2}(1.0I))
+
+z = x ⊗ y
 
